@@ -5,13 +5,14 @@ services:
     image: jwilder/nginx-proxy
     container_name: proxydaw
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx-proxy:/etc/nginx/vhost.d:ro
       - "./conf/my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf:ro"
     networks:
       - frontend
+
   db:
     hostname: db
     image: mysql:5.7
@@ -26,6 +27,7 @@ services:
       - MYSQL_PASSWORD=secret
     networks:
       - backend
+
   web1:
     build: ./dockerfiles/web1
     container_name: web1
@@ -52,6 +54,19 @@ services:
     networks:
       - frontend
       - backend
+
+  ejercicios:
+    image: php:7.3-apache
+    container_name: ejercicios
+    hostname: ejercicios
+    volumes:
+      - ./data/ejercicios:/var/www/html
+    environment:
+      - VIRTUAL_HOST=ejercicios.local,www.ejercicios.local
+    networks:
+      - frontend
+      - backend
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     links:
@@ -64,6 +79,7 @@ services:
     networks:
       - frontend
       - backend
+
 networks:
   frontend:
   backend:
